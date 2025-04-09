@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .box {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            text-align: center;
+            color: white;
+        }
+
+        .client {
+            background: #673AB7;
+            width: 200px;
+            margin: 20px auto;
+        }
+
+        .gateway {
+            background: #4CAF50;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .services-container {
+            display: flex;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .services {
+            flex: 2;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .infrastructure {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .service {
+            flex: 1;
+            background: #2196F3;
+            padding: 15px;
+            border-radius: 6px;
+            color: white;
+            position: relative;
+        }
+
+        .db {
+            background: #90A4AE;
+            margin-top: 10px;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .infra-service {
+            padding: 15px;
+            border-radius: 6px;
+            color: white;
+            position: relative;
+        }
+
+        .eureka {
+            background: #FF9800;
+        }
+
+        .config {
+            background: #F44336;
+        }
+
+        .flow {
+            position: absolute;
+            font-size: 0.8em;
+            color: #666;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .arrow {
+            position: relative;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .arrow::after {
+            content: '↓';
+            font-size: 24px;
+            color: #666;
+        }
+
+        .horizontal-arrow::after {
+            content: '→';
+        }
+
+        .request {
+            background: #e3f2fd;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        .step {
+            display: inline-block;
+            background: #673AB7;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center;">Поток данных в микросервисной архитектуре</h1>
+
+        <!-- Клиент -->
+        <div class="box client">
+            Внешний клиент API
+            <div class="request">GET /api/clients/123</div>
+        </div>
+
+        <div class="arrow">
+            <div class="flow"><span class="step">1</span>HTTP запрос</div>
+        </div>
+
+        <!-- API Gateway -->
+        <div class="box gateway">
+            API Gateway
+            <div style="font-size: 0.9em; margin-top: 10px;">
+                Маршрутизация и управление запросами
+            </div>
+        </div>
+
+        <div class="services-container">
+            <!-- Инфраструктурные сервисы -->
+            <div class="infrastructure">
+                <div class="infra-service eureka">
+                    Eureka Server
+                    <div style="font-size: 0.9em; margin-top: 5px;">
+                        Сервис обнаружения
+                    </div>
+                </div>
+                <div class="infra-service config">
+                    Config Server
+                    <div style="font-size: 0.9em; margin-top: 5px;">
+                        Конфигурация сервисов
+                    </div>
+                </div>
+            </div>
+
+            <!-- Микросервисы -->
+            <div class="services">
+                <div class="service">
+                    Client Service
+                    <div class="db">PostgreSQL</div>
+                </div>
+                <div class="service">
+                    Deposit Service
+                    <div class="db">PostgreSQL</div>
+                </div>
+                <div class="service">
+                    Loan Service
+                    <div class="db">PostgreSQL</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Описание потока данных -->
+        <div style="margin-top: 30px; padding: 15px; background: #f5f5f5; border-radius: 6px;">
+            <h3>Поток данных:</h3>
+            <ol>
+                <li>Клиент отправляет HTTP запрос в API Gateway</li>
+                <li>API Gateway обращается к Eureka Server для определения адреса нужного сервиса</li>
+                <li>Eureka Server возвращает адрес сервиса</li>
+                <li>API Gateway перенаправляет запрос в соответствующий сервис</li>
+                <li>Сервис при необходимости получает конфигурацию из Config Server</li>
+                <li>Сервис обрабатывает запрос и возвращает результат через API Gateway клиенту</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

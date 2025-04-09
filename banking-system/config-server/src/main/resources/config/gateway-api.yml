@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true          # включаем автоматическое определение сервисов
+          lowerCaseServiceId: true
+      routes:
+        - id: client-service
+          uri: lb://CLIENT-SERVICE  # lb:// означает использование Load Balancer
+          predicates:
+            - Path=/api/clients/**
+
+management:
+  endpoint:
+    gateway:
+      enabled: true
