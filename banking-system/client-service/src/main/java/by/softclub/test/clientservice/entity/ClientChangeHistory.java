@@ -13,19 +13,25 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "clients_change_history")
 public class ClientChangeHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "field_name")
+    private String fieldName;
+    @Column(name = "old_value")
+    private String oldValue;
+    @Column(name = "new_value")
+    private String newValue;
+    @Column(name = "change_date")
+    private LocalDateTime changeDate;
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
-    private String fieldName;
-    private String oldValue;
-    private String newValue;
-    private LocalDateTime changeDate;
-    private String changedBy;
 
 }

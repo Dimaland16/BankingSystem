@@ -13,17 +13,25 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name="addresses")
 public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "postal_code")
     private String postalCode;
+    @Column(name = "region")
     private String region;
+    @Column(name = "city")
     private String city;
+    @Column(name = "street")
     private String street;
+    @Column(name = "house")
     private String house;
+    @Column(name = "apartment")
     private String apartment;
 
     @OneToMany(mappedBy = "address")
