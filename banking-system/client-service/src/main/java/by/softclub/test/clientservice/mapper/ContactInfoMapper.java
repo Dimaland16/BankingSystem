@@ -1,13 +1,13 @@
 package by.softclub.test.clientservice.mapper;
 
-import by.softclub.test.clientservice.dto.contactInfo.ContactInfoDto;
+import by.softclub.test.clientservice.dto.contactInfo.ContactInfoRequestDto;
 import by.softclub.test.clientservice.entity.ContactInfo;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface ContactInfoMapper {
 
-    ContactInfo toEntity(ContactInfoDto contactInfoDto);
+    ContactInfo toEntity(ContactInfoRequestDto contactInfoRequestDto);
 
-    ContactInfoDto toDto(ContactInfo contactInfo);
+    ContactInfoRequestDto toDto(ContactInfo contactInfo);
 }

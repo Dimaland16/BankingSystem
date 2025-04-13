@@ -1,8 +1,8 @@
 server:
   port: 8081
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5433/clientService
+  datasource: #Не забыть заменить на 5433 для докера
+    url: jdbc:postgresql://localhost:5432/clientService
     password: 'postgres'
     username: 'postgres'
     driver-class-name: org.postgresql.Driver

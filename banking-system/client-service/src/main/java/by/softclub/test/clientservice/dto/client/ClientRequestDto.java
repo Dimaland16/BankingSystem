@@ -1,8 +1,8 @@
 package by.softclub.test.clientservice.dto.client;
 
-import by.softclub.test.clientservice.dto.address.AddressDto;
-import by.softclub.test.clientservice.dto.contactInfo.ContactInfoDto;
-import by.softclub.test.clientservice.dto.passportData.PassportDataDto;
+import by.softclub.test.clientservice.dto.address.AddressRequestDto;
+import by.softclub.test.clientservice.dto.contactInfo.ContactInfoRequestDto;
+import by.softclub.test.clientservice.dto.passportData.PassportDataRequestDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -39,13 +39,13 @@ public class ClientRequestDto {
 
     @NotNull(message = "Passport data is required")
     @Valid
-    private PassportDataDto passportData;
+    private PassportDataRequestDto passportData;
 
     @NotNull(message = "Contact info is required")
     @Valid
-    private ContactInfoDto contactInfo;
+    private ContactInfoRequestDto contactInfo;
 
     @NotNull(message = "Address info is required")
     @Valid
-    private AddressDto address;
+    private AddressRequestDto address;
 }

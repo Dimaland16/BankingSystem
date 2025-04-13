@@ -46,7 +46,7 @@ public class Client {
     @JoinColumn(name = "contact_info_id", referencedColumnName = "id")
     private ContactInfo contactInfo;
 
-    @ManyToOne()
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 

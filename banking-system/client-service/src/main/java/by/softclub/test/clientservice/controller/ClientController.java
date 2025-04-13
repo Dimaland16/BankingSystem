@@ -3,9 +3,12 @@ package by.softclub.test.clientservice.controller;
 
 import by.softclub.test.clientservice.dto.client.ClientRequestDto;
 import by.softclub.test.clientservice.dto.client.ClientResponseDto;
+import by.softclub.test.clientservice.dto.client.ClientUpdateDto;
 import by.softclub.test.clientservice.entity.*;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import by.softclub.test.clientservice.service.ClientService;
@@ -20,11 +23,15 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    //Создает и вносит нового клиента в бд
+    @Autowired
+    public ClientController(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     @PostMapping
     public ResponseEntity<ClientResponseDto> createClient(@Valid @RequestBody ClientRequestDto clientRequestDto) {
-        return ResponseEntity.ok(clientService.createClient clientRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(clientService.createClient(clientRequestDto));
     }
 
     @GetMapping("/{id}")
@@ -32,9 +39,9 @@ public class ClientController {
         return ResponseEntity.ok(clientService.getClientById(id));
     }
 
-    @GetMapping
+   @GetMapping
     public ResponseEntity<List<ClientResponseDto>> getAllClients() {
-        return ResponseEntity.ok(clientService.createClient)
+        return ResponseEntity.ok(clientService.getAllClients());
     }
 
     @DeleteMapping("/{id}")
@@ -46,9 +53,11 @@ public class ClientController {
     @PutMapping("/{id}")
     public ResponseEntity<ClientResponseDto> updateClient(
             @PathVariable Long id,
-            @Valid @RequestBody Client client) {
-        return ResponseEntity.ok(clientService.updateClient(id, client));
+            @Valid @RequestBody ClientUpdateDto updateDto) {
+        return ResponseEntity.ok(clientService.updateClient(id, updateDto));
     }
+/*
+
 
     //находит клиентов по различным параметрам
     @GetMapping
@@ -80,5 +89,5 @@ public class ClientController {
     @GetMapping("/{id}/history")
     public ResponseEntity<List<ClientResponseDto>> getClientHistory(@PathVariable Long id) {
         return ResponseEntity.ok(clientService.getClientHistory(id));
-    }
+    }*/
 }
