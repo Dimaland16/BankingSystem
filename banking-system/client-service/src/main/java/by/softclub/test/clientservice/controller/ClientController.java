@@ -56,6 +56,20 @@ public class ClientController {
             @Valid @RequestBody ClientUpdateDto updateDto) {
         return ResponseEntity.ok(clientService.updateClient(id, updateDto));
     }
+
+    @GetMapping("/{clientId}/status")
+    public ResponseEntity<ClientStatus> getClientStatus(@PathVariable Long clientId) {
+        ClientStatus status = clientService.getClientStatus(clientId);
+        return ResponseEntity.ok(status);
+    }
+
+    @PatchMapping("/{clientId}/status")
+    public ResponseEntity<Void> changeClientStatus(
+            @PathVariable Long clientId,
+            @RequestParam ClientStatus newStatus) {
+        clientService.changeClientStatus(clientId, newStatus);
+        return ResponseEntity.noContent().build();
+    }
 /*
 
 
@@ -76,15 +90,6 @@ public class ClientController {
                 passportData, contactInfo, address));
     }
 
-
-
-    // Управление статусами клиентов
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<ClientResponseDto> updateClientStatus(
-            @PathVariable Long id,
-            @RequestParam ClientStatus newStatus) {
-        return ResponseEntity.ok(clientService.updateClientStatus(id, newStatus));
-    }
 
     @GetMapping("/{id}/history")
     public ResponseEntity<List<ClientResponseDto>> getClientHistory(@PathVariable Long id) {

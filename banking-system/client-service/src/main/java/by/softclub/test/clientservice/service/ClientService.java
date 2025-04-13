@@ -135,6 +135,20 @@ public class ClientService {
         return clientMapper.toDto(updatedClient);
     }
 
+    public ClientStatus getClientStatus(Long clientId) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client not found with ID: " + clientId));
+        return client.getStatus();
+    }
+
+    public void changeClientStatus(Long clientId, ClientStatus newStatus) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client not found with ID: " + clientId));
+
+        client.setStatus(newStatus);
+        clientRepository.save(client);
+    }
+
     private void createOrUpdateAddress(Client client, AddressUpdateDto addressUpdateDto) {
 
         Address currentAddress = client.getAddress();
