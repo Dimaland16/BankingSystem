@@ -1,4 +1,4 @@
-package by.softclub.test.loan_service;
+package by.softclub.test.loanservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

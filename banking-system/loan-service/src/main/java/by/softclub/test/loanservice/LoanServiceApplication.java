@@ -1,4 +1,4 @@
-package by.softclub.test.loan_service;
+package by.softclub.test.loanservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
