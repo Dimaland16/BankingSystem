@@ -4,6 +4,7 @@ package by.softclub.test.clientservice.controller;
 import by.softclub.test.clientservice.dto.client.ClientRequestDto;
 import by.softclub.test.clientservice.dto.client.ClientResponseDto;
 import by.softclub.test.clientservice.dto.client.ClientUpdateDto;
+import by.softclub.test.clientservice.dto.clientChangeHistory.ClientChangeHistoryResponseDto;
 import by.softclub.test.clientservice.entity.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,18 +58,23 @@ public class ClientController {
         return ResponseEntity.ok(clientService.updateClient(id, updateDto));
     }
 
-    @GetMapping("/{clientId}/status")
-    public ResponseEntity<ClientStatus> getClientStatus(@PathVariable Long clientId) {
-        ClientStatus status = clientService.getClientStatus(clientId);
+    @GetMapping("/{id}/status")
+    public ResponseEntity<ClientStatus> getClientStatus(@PathVariable Long id) {
+        ClientStatus status = clientService.getClientStatus(id);
         return ResponseEntity.ok(status);
     }
 
-    @PatchMapping("/{clientId}/status")
+    @PatchMapping("/{id}/status")
     public ResponseEntity<Void> changeClientStatus(
-            @PathVariable Long clientId,
+            @PathVariable Long id,
             @RequestParam ClientStatus newStatus) {
-        clientService.changeClientStatus(clientId, newStatus);
+        clientService.changeClientStatus(id, newStatus);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<ClientChangeHistoryResponseDto>> getClientChangeHistory(@PathVariable Long id) {
+        return ResponseEntity.ok(clientService.getClientChangeHistory(id));
     }
 /*
 
@@ -90,9 +96,5 @@ public class ClientController {
                 passportData, contactInfo, address));
     }
 
-
-    @GetMapping("/{id}/history")
-    public ResponseEntity<List<ClientResponseDto>> getClientHistory(@PathVariable Long id) {
-        return ResponseEntity.ok(clientService.getClientHistory(id));
-    }*/
+}*/
 }

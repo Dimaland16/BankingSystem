@@ -6,15 +6,13 @@ import by.softclub.test.clientservice.dto.passportData.PassportDataUpdateDto;
 import by.softclub.test.clientservice.entity.ClientStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientUpdateDto {

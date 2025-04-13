@@ -4,16 +4,14 @@ import by.softclub.test.clientservice.dto.address.AddressRequestDto;
 import by.softclub.test.clientservice.dto.contactInfo.ContactInfoRequestDto;
 import by.softclub.test.clientservice.dto.passportData.PassportDataRequestDto;
 import by.softclub.test.clientservice.entity.ClientStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientResponseDto {
