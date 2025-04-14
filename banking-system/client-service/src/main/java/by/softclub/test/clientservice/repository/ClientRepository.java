@@ -12,4 +12,6 @@ public interface ClientRepository extends JpaRepository<Client, Long>, JpaSpecif
     Boolean existsByContactInfoEmail(String email);
     Boolean existsByContactInfoPhoneNumber(String phoneNumber);
     Integer countClientsByAddressId(Long id);
+    boolean existsByContactInfoEmailAndIdNot(String email, Long id);
+    boolean existsByContactInfoPhoneNumberAndIdNot(String phoneNumber, Long id);
 }
