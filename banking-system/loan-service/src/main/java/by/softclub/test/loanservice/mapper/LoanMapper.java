@@ -15,5 +15,5 @@ public interface LoanMapper {
 
     LoanResponseDto toDto(Loan loan);
 
-    LoanTerms loanTermsDtoToEntity(LoanTermsDto loanTermsDto);
+    //LoanTerms loanTermsDtoToEntity(LoanTermsDto loanTermsDto);
 }

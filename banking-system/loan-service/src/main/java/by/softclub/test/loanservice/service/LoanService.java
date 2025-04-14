@@ -67,9 +67,9 @@ public class LoanService {
         if (updateDto.getCurrentDebt() != null) {
             loan.setCurrentDebt(updateDto.getCurrentDebt());
         }
-        if (updateDto.getLoanTerms() != null) {
+/*        if (updateDto.getLoanTerms() != null) {
             loan.setLoanTerms(loanMapper.loanTermsDtoToEntity(updateDto.getLoanTerms()));
-        }
+        }*/
 
         Loan updatedLoan = loanRepository.save(loan);
         return loanMapper.toDto(updatedLoan);
