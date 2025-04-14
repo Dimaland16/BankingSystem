@@ -76,25 +76,33 @@ public class ClientController {
     public ResponseEntity<List<ClientChangeHistoryResponseDto>> getClientChangeHistory(@PathVariable Long id) {
         return ResponseEntity.ok(clientService.getClientChangeHistory(id));
     }
-/*
 
+    @GetMapping("/search")
+    public ResponseEntity<List<ClientResponseDto>> searchClients(
+            @RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String middleName, @RequestParam(required = false) LocalDate birthDate,
+            @RequestParam(required = false) LocalDate birthDateStart, @RequestParam(required = false) LocalDate birthDateEnd,
+            @RequestParam(required = false) String passportSeries, @RequestParam(required = false) String passportNumber,
+            @RequestParam(required = false) String email, @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) ClientStatus status, @RequestParam(required = false) LocalDateTime registrationDateStart,
+            @RequestParam(required = false) LocalDateTime registrationDateEnd) {
 
-    //находит клиентов по различным параметрам
-    @GetMapping
-    public ResponseEntity<List<ClientResponseDto>> getClients (
-            @RequestParam(required = false) String firstName,
-            @RequestParam(required = false) String lastName,
-            @RequestParam(required = false) String middleName,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthDate,
-            @RequestParam(required = false) ClientStatus status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime registrationDate,
-            @RequestParam(required = false) PassportData passportData,
-            @RequestParam(required = false) ContactInfo contactInfo,
-            @RequestParam(required = false) Address address
-    ) {
-        return ResponseEntity.ok(clientService.getClients(firstName, lastName, middleName, birthDate, status, registrationDate,
-                passportData, contactInfo, address));
+        List<ClientResponseDto> clients = clientService.searchClients(
+                firstName,
+                lastName,
+                middleName,
+                birthDate,
+                birthDateStart,
+                birthDateEnd,
+                passportSeries,
+                passportNumber,
+                email,
+                phoneNumber,
+                status,
+                registrationDateStart,
+                registrationDateEnd
+        );
+
+        return ResponseEntity.ok(clients);
     }
-
-}*/
 }

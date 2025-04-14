@@ -11,10 +11,13 @@ import by.softclub.test.clientservice.dto.passportData.PassportDataUpdateDto;
 import by.softclub.test.clientservice.entity.*;
 import by.softclub.test.clientservice.mapper.*;
 import by.softclub.test.clientservice.repository.*;
+import by.softclub.test.clientservice.specification.ClientSpecification;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -165,6 +168,33 @@ public class ClientService {
                 .toList();
     }
 
+    public List<ClientResponseDto> searchClients(String firstName, String lastName, String middleName, LocalDate birthDate,
+                                      LocalDate birthDateStart, LocalDate birthDateEnd, String passportSeries,
+                                      String passportNumber, String email, String phoneNumber, ClientStatus status,
+                                      LocalDateTime registrationDateStart, LocalDateTime registrationDateEnd) {
+
+        Specification<Client> spec = ClientSpecification.searchClients(
+                firstName,
+                lastName,
+                middleName,
+                birthDate,
+                birthDateStart,
+                birthDateEnd,
+                passportSeries,
+                passportNumber,
+                email,
+                phoneNumber,
+                status,
+                registrationDateStart,
+                registrationDateEnd
+        );
+
+        return clientRepository.findAll(spec)
+                .stream()
+                .map(clientMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
     private void createOrUpdateAddress(Client client, AddressUpdateDto addressUpdateDto) {
 
         Address currentAddress = client.getAddress();
@@ -284,5 +314,6 @@ public class ClientService {
         Address newAddress = addressMapper.toEntity(addressRequestDto);
         return addressRepository.save(newAddress);
     }
+
 
 }
