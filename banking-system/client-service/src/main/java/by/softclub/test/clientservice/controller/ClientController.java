@@ -3,9 +3,13 @@ package by.softclub.test.clientservice.controller;
 
 import by.softclub.test.clientservice.dto.client.ClientRequestDto;
 import by.softclub.test.clientservice.dto.client.ClientResponseDto;
+import by.softclub.test.clientservice.dto.client.ClientUpdateDto;
+import by.softclub.test.clientservice.dto.clientChangeHistory.ClientChangeHistoryResponseDto;
 import by.softclub.test.clientservice.entity.*;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import by.softclub.test.clientservice.service.ClientService;
@@ -20,11 +24,15 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    //Создает и вносит нового клиента в бд
+    @Autowired
+    public ClientController(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     @PostMapping
     public ResponseEntity<ClientResponseDto> createClient(@Valid @RequestBody ClientRequestDto clientRequestDto) {
-        return ResponseEntity.ok(clientService.createClient clientRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(clientService.createClient(clientRequestDto));
     }
 
     @GetMapping("/{id}")
@@ -32,9 +40,9 @@ public class ClientController {
         return ResponseEntity.ok(clientService.getClientById(id));
     }
 
-    @GetMapping
+   @GetMapping
     public ResponseEntity<List<ClientResponseDto>> getAllClients() {
-        return ResponseEntity.ok(clientService.createClient)
+        return ResponseEntity.ok(clientService.getAllClients());
     }
 
     @DeleteMapping("/{id}")
@@ -46,9 +54,30 @@ public class ClientController {
     @PutMapping("/{id}")
     public ResponseEntity<ClientResponseDto> updateClient(
             @PathVariable Long id,
-            @Valid @RequestBody Client client) {
-        return ResponseEntity.ok(clientService.updateClient(id, client));
+            @Valid @RequestBody ClientUpdateDto updateDto) {
+        return ResponseEntity.ok(clientService.updateClient(id, updateDto));
     }
+
+    @GetMapping("/{id}/status")
+    public ResponseEntity<ClientStatus> getClientStatus(@PathVariable Long id) {
+        ClientStatus status = clientService.getClientStatus(id);
+        return ResponseEntity.ok(status);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Void> changeClientStatus(
+            @PathVariable Long id,
+            @RequestParam ClientStatus newStatus) {
+        clientService.changeClientStatus(id, newStatus);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<ClientChangeHistoryResponseDto>> getClientChangeHistory(@PathVariable Long id) {
+        return ResponseEntity.ok(clientService.getClientChangeHistory(id));
+    }
+/*
+
 
     //находит клиентов по различным параметрам
     @GetMapping
@@ -67,18 +96,5 @@ public class ClientController {
                 passportData, contactInfo, address));
     }
 
-
-
-    // Управление статусами клиентов
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<ClientResponseDto> updateClientStatus(
-            @PathVariable Long id,
-            @RequestParam ClientStatus newStatus) {
-        return ResponseEntity.ok(clientService.updateClientStatus(id, newStatus));
-    }
-
-    @GetMapping("/{id}/history")
-    public ResponseEntity<List<ClientResponseDto>> getClientHistory(@PathVariable Long id) {
-        return ResponseEntity.ok(clientService.getClientHistory(id));
-    }
+}*/
 }

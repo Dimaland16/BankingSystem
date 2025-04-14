@@ -1,0 +1,31 @@
+package by.softclub.test.clientservice.dto.address;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+public class AddressUpdateDto {
+
+    @Size(max = 10, message = "Postal code must not exceed 10 characters")
+    private String postalCode;
+
+    @Size(max = 100, message = "Region must not exceed 100 characters")
+    private String region;
+
+    @Size(max = 100, message = "City must not exceed 100 characters")
+    private String city;
+
+    @Size(max = 100, message = "Street must not exceed 100 characters")
+    private String street;
+
+    @Size(max = 20, message = "House must not exceed 20 characters")
+    private String house;
+
+    @Size(max = 10, message = "Apartment must not exceed 10 characters")
+    private String apartment;
+}

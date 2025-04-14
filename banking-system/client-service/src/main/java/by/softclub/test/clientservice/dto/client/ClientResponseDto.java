@@ -1,19 +1,17 @@
 package by.softclub.test.clientservice.dto.client;
 
-import by.softclub.test.clientservice.dto.address.AddressDto;
-import by.softclub.test.clientservice.dto.contactInfo.ContactInfoDto;
-import by.softclub.test.clientservice.dto.passportData.PassportDataDto;
+import by.softclub.test.clientservice.dto.address.AddressRequestDto;
+import by.softclub.test.clientservice.dto.contactInfo.ContactInfoRequestDto;
+import by.softclub.test.clientservice.dto.passportData.PassportDataRequestDto;
 import by.softclub.test.clientservice.entity.ClientStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientResponseDto {
@@ -32,9 +30,9 @@ public class ClientResponseDto {
 
     private LocalDateTime registrationDate;
 
-    private PassportDataDto passportData;
+    private PassportDataRequestDto passportData;
 
-    private ContactInfoDto contactInfo;
+    private ContactInfoRequestDto contactInfo;
 
-    private AddressDto address;
+    private AddressRequestDto address;
 }

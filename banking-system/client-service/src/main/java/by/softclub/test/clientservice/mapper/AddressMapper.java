@@ -1,13 +1,13 @@
 package by.softclub.test.clientservice.mapper;
 
-import by.softclub.test.clientservice.dto.address.AddressDto;
+import by.softclub.test.clientservice.dto.address.AddressRequestDto;
 import by.softclub.test.clientservice.entity.Address;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface AddressMapper {
 
-    Address toEntity(AddressDto addressDto);
+    Address toEntity(AddressRequestDto addressRequestDto);
 
-    AddressDto toDto(Address address);
+    AddressRequestDto toDto(Address address);
 }
