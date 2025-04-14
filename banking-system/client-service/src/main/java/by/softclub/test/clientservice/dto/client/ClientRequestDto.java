@@ -4,10 +4,7 @@ import by.softclub.test.clientservice.dto.address.AddressRequestDto;
 import by.softclub.test.clientservice.dto.contactInfo.ContactInfoRequestDto;
 import by.softclub.test.clientservice.dto.passportData.PassportDataRequestDto;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -20,14 +17,17 @@ import java.time.LocalDate;
 public class ClientRequestDto {
 
     @NotBlank(message = "First name is required")
+    @Pattern(regexp = "^[a-zA-Zа-яА-ЯёЁ\\s\\-']+$", message = "Invalid first name format")
     @Size(max = 50, message = "First name must not exceed 50 characters")
     private String firstName;
 
     @NotBlank(message = "Last name is required")
+    @Pattern(regexp = "^[a-zA-Zа-яА-ЯёЁ\\s\\-']+$", message = "Invalid last name format")
     @Size(max = 50, message = "Last name must not exceed 50 characters")
     private String lastName;
 
     @NotBlank(message = "Middle name is required")
+    @Pattern(regexp = "^[a-zA-Zа-яА-ЯёЁ\\s\\-']+$", message = "Invalid middle name format")
     @Size(max = 50, message = "Middle name must not exceed 50 characters")
     private String middleName;
 

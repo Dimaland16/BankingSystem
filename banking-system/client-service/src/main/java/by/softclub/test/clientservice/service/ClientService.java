@@ -12,6 +12,7 @@ import by.softclub.test.clientservice.entity.*;
 import by.softclub.test.clientservice.mapper.*;
 import by.softclub.test.clientservice.repository.*;
 import by.softclub.test.clientservice.specification.ClientSpecification;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -53,9 +55,11 @@ public class ClientService {
         this.clientChangeHistoryMapper = clientChangeHistoryMapper;
     }
 
+    @Transactional
     public ClientResponseDto createClient(ClientRequestDto requestDto) {
 
         validateUniqueFields(requestDto);
+        validateAge(requestDto.getBirthDate());
 
         PassportData passportData = passportDataMapper.toEntity(requestDto.getPassportData());
         ContactInfo contactInfo = contactInfoMapper.toEntity(requestDto.getContactInfo());
@@ -83,15 +87,18 @@ public class ClientService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteClient(Long id) {
         Client client = findClientById(id);
         clientRepository.delete(client);
     }
 
+    @Transactional
     public ClientResponseDto updateClient(Long id, ClientUpdateDto clientUpdateDto) {
         Client client = findClientById(id);
 
         validateUniqueFields(client, clientUpdateDto);
+        validateAge(clientUpdateDto.getBirthDate());
 
         updateFieldIfChanged(client, "firstName", client.getFirstName(), clientUpdateDto.getFirstName(), client::setFirstName);
         updateFieldIfChanged(client, "lastName", client.getLastName(), clientUpdateDto.getLastName(), client::setLastName);
@@ -118,6 +125,7 @@ public class ClientService {
         return client.getStatus();
     }
 
+    @Transactional
     public void changeClientStatus(Long clientId, ClientStatus newStatus) {
         Client client = findClientById(clientId);
 
@@ -313,5 +321,18 @@ public class ClientService {
 
         Address newAddress = addressMapper.toEntity(addressRequestDto);
         return addressRepository.save(newAddress);
+    }
+
+    private void validateAge(LocalDate birthDate) {
+        if (birthDate == null) {
+            return;
+        }
+
+        LocalDate now = LocalDate.now();
+        int age = Period.between(birthDate, now).getYears();
+
+        if (age < 18 || age > 100) {
+            throw new IllegalArgumentException("Client must be between 18 and 100 years old");
+        }
     }
 }
