@@ -17,5 +17,4 @@ public class LoanTerms {
 
     @Column(name = "monthly_payment")
     private BigDecimal monthlyPayment;
-
 }
