@@ -9,6 +9,9 @@ import by.softclub.test.clientservice.dto.clientChangeHistory.ClientChangeHistor
 import by.softclub.test.clientservice.dto.contactInfo.ContactInfoUpdateDto;
 import by.softclub.test.clientservice.dto.passportData.PassportDataUpdateDto;
 import by.softclub.test.clientservice.entity.*;
+import by.softclub.test.clientservice.exception.DuplicateEmailException;
+import by.softclub.test.clientservice.exception.DuplicatePassportDataException;
+import by.softclub.test.clientservice.exception.DuplicatePhoneNumberException;
 import by.softclub.test.clientservice.mapper.*;
 import by.softclub.test.clientservice.repository.*;
 import by.softclub.test.clientservice.specification.ClientSpecification;
@@ -175,18 +178,19 @@ public class ClientService {
     private void validateUniqueFields(ClientRequestDto requestDto) {
 
         if (clientRepository.existsByContactInfoEmail(requestDto.getContactInfo().getEmail())) {
-            throw new RuntimeException("Client with this email already exists");
+            throw new DuplicateEmailException(requestDto.getContactInfo().getEmail());
         }
 
         if (clientRepository.existsByContactInfoPhoneNumber(requestDto.getContactInfo().getPhoneNumber())) {
-            throw new RuntimeException("Client with this phone number already exists");
+            throw new DuplicatePhoneNumberException(requestDto.getContactInfo().getPhoneNumber());
         }
 
         if (passportDataRepository.existsBySeriesAndNumber(
                 requestDto.getPassportData().getSeries(),
                 requestDto.getPassportData().getNumber())) {
-            throw new RuntimeException("Passport with this series and number already exists");
-        }
+            throw new DuplicatePassportDataException(
+                    requestDto.getPassportData().getSeries(),
+                    requestDto.getPassportData().getNumber());        }
     }
 
     private void validateUniqueFields(Client client, ClientUpdateDto clientUpdateDto) {
