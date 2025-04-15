@@ -9,4 +9,5 @@ public interface PassportDataRepository extends JpaRepository<PassportData, Long
 
     boolean existsBySeriesAndNumber(String series, String number);
 
+    boolean existsBySeriesAndNumberAndClientIdNot(String newSeries, String newNumber, Long clientId);
 }
