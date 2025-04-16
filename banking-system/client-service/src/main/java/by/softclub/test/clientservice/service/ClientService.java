@@ -9,9 +9,7 @@ import by.softclub.test.clientservice.dto.clientChangeHistory.ClientChangeHistor
 import by.softclub.test.clientservice.dto.contactInfo.ContactInfoUpdateDto;
 import by.softclub.test.clientservice.dto.passportData.PassportDataUpdateDto;
 import by.softclub.test.clientservice.entity.*;
-import by.softclub.test.clientservice.exception.DuplicateEmailException;
-import by.softclub.test.clientservice.exception.DuplicatePassportDataException;
-import by.softclub.test.clientservice.exception.DuplicatePhoneNumberException;
+import by.softclub.test.clientservice.exception.*;
 import by.softclub.test.clientservice.mapper.*;
 import by.softclub.test.clientservice.repository.*;
 import by.softclub.test.clientservice.specification.ClientSpecification;
@@ -172,7 +170,7 @@ public class ClientService {
 
     private Client findClientById(Long id) {
         return clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
     private void validateUniqueFields(ClientRequestDto requestDto) {
@@ -204,8 +202,7 @@ public class ClientService {
 
             if (clientRepository.existsByContactInfoEmailAndIdNot(
                     newContactInfo.getEmail(), clientId)) {
-                throw new RuntimeException("Client with this email already exists");
-            }
+                throw new DuplicateEmailException(newContactInfo.getEmail());            }
         }
 
         if (newContactInfo != null &&
@@ -214,8 +211,7 @@ public class ClientService {
 
             if (clientRepository.existsByContactInfoPhoneNumberAndIdNot(
                     newContactInfo.getPhoneNumber(), clientId)) {
-                throw new RuntimeException("Client with this phone number already exists");
-            }
+                throw new DuplicatePhoneNumberException(newContactInfo.getPhoneNumber());            }
         }
 
         if (newPassportData != null &&
@@ -230,8 +226,7 @@ public class ClientService {
                     : client.getPassportData().getNumber();
 
             if (passportDataRepository.existsBySeriesAndNumberAndClientIdNot(newSeries, newNumber, clientId)) {
-                throw new RuntimeException("Passport with this series and number already exists");
-            }
+                throw new DuplicatePassportDataException(newSeries, newNumber);              }
         }
     }
 
@@ -336,7 +331,7 @@ public class ClientService {
         int age = Period.between(birthDate, now).getYears();
 
         if (age < 18 || age > 100) {
-            throw new IllegalArgumentException("Client must be between 18 and 100 years old");
+            throw new InvalidAgeException(age);
         }
     }
 }

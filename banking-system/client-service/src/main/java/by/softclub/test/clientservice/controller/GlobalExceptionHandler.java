@@ -1,11 +1,9 @@
 package by.softclub.test.clientservice.controller;
 
-import by.softclub.test.clientservice.exception.DuplicateEmailException;
-import by.softclub.test.clientservice.exception.DuplicatePassportDataException;
-import by.softclub.test.clientservice.exception.DuplicatePhoneNumberException;
-import by.softclub.test.clientservice.exception.ErrorResponse;
+import by.softclub.test.clientservice.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,6 +23,28 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicatePassportDataException.class)
     public ResponseEntity<ErrorResponse> handleDuplicatePassportDataException(DuplicatePassportDataException ex) {
         return buildErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidAgeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidAgeException(InvalidAgeException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        StringBuilder errorMessage = new StringBuilder("Validation failed: ");
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errorMessage.append(error.getField())
+                    .append(" - ")
+                    .append(error.getDefaultMessage())
+                    .append("; ");
+        });
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, errorMessage.toString());
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String message) {
