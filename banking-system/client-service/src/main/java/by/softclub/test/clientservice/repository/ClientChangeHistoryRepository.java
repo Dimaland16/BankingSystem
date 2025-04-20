@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface ClientChangeHistoryRepository extends JpaRepository<ClientChangeHistory, Long> {
     List<ClientChangeHistory> findByClientIdOrderByChangeDateDesc(Long clientId);
+
+    void deleteByClientId(Long id);
 }

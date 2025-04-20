@@ -14,7 +14,6 @@ import by.softclub.test.clientservice.mapper.*;
 import by.softclub.test.clientservice.repository.*;
 import by.softclub.test.clientservice.specification.ClientSpecification;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -91,6 +90,12 @@ public class ClientService {
     @Transactional
     public void deleteClient(Long id) {
         Client client = findClientById(id);
+        changeHistoryRepository.deleteByClientId(client.getId());
+
+        if (clientRepository.countClientsByAddressId(client.getAddress().getId()) == 1) {
+            addressRepository.delete(client.getAddress());
+        }
+
         clientRepository.delete(client);
     }
 
@@ -245,16 +250,47 @@ public class ClientService {
 
         Address currentAddress = client.getAddress();
 
+        if (!isAddressChanged(currentAddress, addressUpdateDto)) {
+            return;
+        }
+
+        Address newAddress = new Address();
+        copyAddressFields(currentAddress, newAddress);
+        updateAddress(newAddress, addressUpdateDto, client);
+
+        Optional<Address> existingAddress = addressRepository.findAddressByRegionAndCityAndStreetAndHouseAndApartment(
+                newAddress.getRegion(),
+                newAddress.getCity(),
+                newAddress.getStreet(),
+                newAddress.getHouse(),
+                newAddress.getApartment()
+        );
+
         boolean isSharedAddress = clientRepository.countClientsByAddressId(currentAddress.getId()) > 1;
 
-        if (isSharedAddress) {
-            Address newAddress = new Address();
-            copyAddressFields(currentAddress, newAddress);
-            updateAddress(newAddress, addressUpdateDto, client);
-            client.setAddress(addressRepository.save(newAddress));
+        if (existingAddress.isPresent()) {
+            client.setAddress(existingAddress.get());
+            if (!isSharedAddress) {
+                addressRepository.delete(currentAddress);
+            }
         } else {
-            updateAddress(currentAddress, addressUpdateDto, client);
+            if (isSharedAddress) {
+                client.setAddress(newAddress);
+            } else {
+                copyAddressFields(newAddress, currentAddress);
+            }
         }
+    }
+
+    private boolean isAddressChanged(Address currentAddress, AddressUpdateDto addressUpdateDto) {
+        return !(
+                (addressUpdateDto.getPostalCode() == null || addressUpdateDto.getPostalCode().equals(currentAddress.getPostalCode())) &&
+                        (addressUpdateDto.getRegion() == null || addressUpdateDto.getRegion().equals(currentAddress.getRegion())) &&
+                        (addressUpdateDto.getCity() == null || addressUpdateDto.getCity().equals(currentAddress.getCity())) &&
+                        (addressUpdateDto.getStreet() == null || addressUpdateDto.getStreet().equals(currentAddress.getStreet())) &&
+                        (addressUpdateDto.getHouse() == null || addressUpdateDto.getHouse().equals(currentAddress.getHouse())) &&
+                        (addressUpdateDto.getApartment() == null || addressUpdateDto.getApartment().equals(currentAddress.getApartment()))
+        );
     }
 
     private void copyAddressFields(Address source, Address target) {
