@@ -32,9 +32,31 @@ public class LoanService {
     private static final int SCALE = 2;
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP;
 
-    public Long getClientIdForLoan(String passportSeries, String passportNumber) {
-        LoanClientDto client = clientService.getClientByPassport(passportSeries, passportNumber);
-        return client.getId();
+    public LoanClientDto getClientForLoan(String passportSeries, String passportNumber) {
+        return clientService.getClientByPassport(passportSeries, passportNumber);
+    }
+
+    public boolean isEligibleForLoanAgreement(LoanClientDto clientDto) {
+
+        if (!clientDto.getStatus().equals(LoanClientStatus.ACTIVE)) {
+            throw new RuntimeException("Client is not active. Current status: " + clientDto.getStatus());
+        }
+
+        if (!isClientOldEnough(clientDto.getBirthDate())) {
+            throw new RuntimeException("Client is under the minimum age requirement");
+        }
+
+        return true;
+    }
+
+    private boolean isClientOldEnough(LocalDate birthDate) {
+        LocalDate now = LocalDate.now();
+        int age = now.getYear() - birthDate.getYear();
+        if (now.getMonthValue() < birthDate.getMonthValue() ||
+                (now.getMonthValue() == birthDate.getMonthValue() && now.getDayOfMonth() < birthDate.getDayOfMonth())) {
+            age--;
+        }
+        return age >= 25;
     }
 
     private List<PaymentSchedule> calculateAnnuityPaymentSchedule(Loan loan) {
@@ -93,9 +115,13 @@ public class LoanService {
     }
 
     public LoanResponseDto createLoan(LoanRequestDto requestDto) {
+        LoanClientDto client = getClientForLoan("MP", "83456456");
+        if (!isEligibleForLoanAgreement(client))
+            throw new RuntimeException("Client is not eligible for loan");
+
         Loan loan = loanMapper.toEntity(requestDto);
+        loan.setClientId(client.getId());
         loan.setStatus(LoanStatus.CREATED);
-        loan.setClientId(getClientIdForLoan("MP", "83456456"));
         // Расчет графика платежей
         loan.setPaymentSchedule(calculateAnnuityPaymentSchedule(loan));
 
