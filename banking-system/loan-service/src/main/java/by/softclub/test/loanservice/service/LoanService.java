@@ -1,5 +1,7 @@
 package by.softclub.test.loanservice.service;
 
+import by.softclub.test.loanservice.dto.LoanClientDto;
+import by.softclub.test.loanservice.dto.LoanClientStatus;
 import by.softclub.test.loanservice.dto.loan.LoanRequestDto;
 import by.softclub.test.loanservice.dto.loan.LoanResponseDto;
 import by.softclub.test.loanservice.dto.loan.LoanUpdateDto;
@@ -24,9 +26,16 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final LoanMapper loanMapper;
     //добавить интеграцию с клиент-сервис
+    private final ClientService clientService;
+
 
     private static final int SCALE = 2;
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP;
+
+    public Long getClientIdForLoan(String passportSeries, String passportNumber) {
+        LoanClientDto client = clientService.getClientByPassport(passportSeries, passportNumber);
+        return client.getId();
+    }
 
     private List<PaymentSchedule> calculateAnnuityPaymentSchedule(Loan loan) {
         List<PaymentSchedule> schedule = new ArrayList<>();
@@ -77,15 +86,16 @@ public class LoanService {
         return schedule;
     }
 
-    public LoanService(LoanRepository loanRepository, LoanMapper loanMapper) {
+    public LoanService(LoanRepository loanRepository, LoanMapper loanMapper, ClientService clientService) {
         this.loanRepository = loanRepository;
         this.loanMapper = loanMapper;
+        this.clientService = clientService;
     }
 
     public LoanResponseDto createLoan(LoanRequestDto requestDto) {
         Loan loan = loanMapper.toEntity(requestDto);
         loan.setStatus(LoanStatus.CREATED);
-
+        loan.setClientId(getClientIdForLoan("MP", "83456456"));
         // Расчет графика платежей
         loan.setPaymentSchedule(calculateAnnuityPaymentSchedule(loan));
 

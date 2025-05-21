@@ -16,8 +16,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class LoanRequestDto {
 
-    @NotNull(message = "Client ID is required")
-    private Long clientId;
 
     @NotBlank(message = "Contract number is required")
     @Size(max = 50, message = "Contract number must not exceed 50 characters")
@@ -36,7 +34,7 @@ public class LoanRequestDto {
     private BigDecimal interestRate;
 
     @NotNull(message = "Loan term months is required")
-    @Size(min = 1, message = "Loan term months must be at least 1")
+    @Min(value = 1, message = "Loan term months must be at least 1")
     private Integer loanTermMonths;
 
     @NotNull(message = "Contract date is required")

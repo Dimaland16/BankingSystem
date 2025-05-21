@@ -21,7 +21,7 @@ import java.util.List;
 public class LoanResponseDto {
 
     @NotNull(message = "ID is required")
-    private Long id;
+    private Long loanId;
 
     @NotNull(message = "Client ID is required")
     private Long clientId;
