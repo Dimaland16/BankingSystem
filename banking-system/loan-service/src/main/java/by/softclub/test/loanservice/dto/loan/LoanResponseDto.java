@@ -2,6 +2,7 @@ package by.softclub.test.loanservice.dto.loan;
 
 import by.softclub.test.loanservice.dto.payment.PaymentHistoryDto;
 import by.softclub.test.loanservice.dto.payment.PaymentScheduleDto;
+import by.softclub.test.loanservice.entity.LoanProductType;
 import by.softclub.test.loanservice.entity.LoanStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -13,6 +14,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+
 
 @Getter
 @Setter
@@ -32,7 +34,7 @@ public class LoanResponseDto {
 
     @NotBlank(message = "Product type is required")
     @Size(max = 50, message = "Product type must not exceed 50 characters")
-    private String productType;
+    private LoanProductType productType;
 
     @NotNull(message = "Loan amount is required")
     @Positive(message = "Loan amount must be greater than 0")

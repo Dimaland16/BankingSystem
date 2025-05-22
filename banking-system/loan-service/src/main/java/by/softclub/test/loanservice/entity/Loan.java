@@ -21,10 +21,10 @@ public class Loan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "loanId")
-    private long loanId;
+    private Long loanId;
 
     @Column(name = "client_id")
-    private long clientId;
+    private Long clientId;
 
     @Column(name = "contract_number")
     private String contractNumber;

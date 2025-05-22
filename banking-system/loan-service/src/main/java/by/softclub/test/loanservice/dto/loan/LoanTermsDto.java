@@ -31,5 +31,5 @@ public class LoanTermsDto {
 
     @NotNull(message = "Monthly payment is required")
     @Positive(message = "Monthly payment must be positive")
-    private BigDecimal monthlyPayment;
+    private Integer monthlyPayment;
 }

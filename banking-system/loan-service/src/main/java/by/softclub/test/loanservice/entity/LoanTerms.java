@@ -1,9 +1,17 @@
 package by.softclub.test.loanservice.entity;
 
-import jakarta.persistence.Column;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+import jakarta.persistence.Column;
 import java.math.BigDecimal;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoanTerms {
 
     @Column(name = "early_repayment_allowed")
@@ -16,5 +24,13 @@ public class LoanTerms {
     private Integer gracePeriodDays;
 
     @Column(name = "monthly_payment")
-    private BigDecimal monthlyPayment;
+    private Integer monthlyPayment;
+
+    public LoanTerms(Boolean earlyRepaymentAllowed, String penaltyConditions, Integer gracePeriodDays) {
+        this.earlyRepaymentAllowed = earlyRepaymentAllowed;
+        this.penaltyConditions = penaltyConditions;
+        this.gracePeriodDays = gracePeriodDays;
+    }
+
+    //public LoanTerms() {}
 }

@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -119,9 +120,13 @@ public class LoanService {
         if (!isEligibleForLoanAgreement(client))
             throw new RuntimeException("Client is not eligible for loan");
 
+        if (requestDto.getLoanAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Loan amount must be positive");
+        }
+
         Loan loan = loanMapper.toEntity(requestDto);
         loan.setClientId(client.getId());
-        loan.setStatus(LoanStatus.CREATED);
+        loan.setStatus(LoanStatus.ACTIVE);
         // Расчет графика платежей
         loan.setPaymentSchedule(calculateAnnuityPaymentSchedule(loan));
 
@@ -143,6 +148,10 @@ public class LoanService {
 
     public LoanResponseDto updateLoan(Long id, LoanUpdateDto updateDto) {
         Loan loan = loanRepository.findById(id).orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (updateDto.getLoanAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Loan amount must be positive");
+        }
 
         // Обновляем поля, если они переданы в DTO
         if (updateDto.getContractNumber() != null) {
@@ -171,11 +180,19 @@ public class LoanService {
         }*/
 
         Loan updatedLoan = loanRepository.save(loan);
-        return loanMapper.toDto(updatedLoan);
+        loanRepository.flush(); // <-- принудительно  отправляем изменения в БД
+        //return loanMapper.toDto(updatedLoan);
+
+        Logger julLog = java.util.logging.Logger.getLogger("julLog");
+        julLog.info(updatedLoan.toString());
+        LoanResponseDto result = loanMapper.toDto(updatedLoan);
+        julLog.info(result.toString());
+
+        return result;
     }
 
     public void deleteLoan(Long id) {
-        
+        loanRepository.deleteById(id);
     }
 
     public String generateStatement(Long id) {

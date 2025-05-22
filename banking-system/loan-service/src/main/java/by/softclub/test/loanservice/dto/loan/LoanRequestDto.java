@@ -1,5 +1,6 @@
 package by.softclub.test.loanservice.dto.loan;
 
+import by.softclub.test.loanservice.entity.LoanProductType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class LoanRequestDto {
 
+    @NotNull(message = "ID is required")
+    private Long LoanId;
+
+    @NotNull(message = "Client ID is required")
+    private Long clientId;
 
     @NotBlank(message = "Contract number is required")
     @Size(max = 50, message = "Contract number must not exceed 50 characters")
@@ -23,7 +29,7 @@ public class LoanRequestDto {
 
     @NotBlank(message = "Product type is required")
     @Size(max = 50, message = "Product type must not exceed 50 characters")
-    private String productType;
+    private LoanProductType productType;
 
     @NotNull(message = "Loan amount is required")
     @Positive(message = "Loan amount must be positive")
