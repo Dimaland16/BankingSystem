@@ -28,6 +28,9 @@ public class Client {
     private String middleName;
     @Column(name = "birth_date")
     private LocalDate birthDate;
+    @Column(name = "password")
+    private String password;
+
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

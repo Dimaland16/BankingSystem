@@ -12,7 +12,7 @@ spring:
         - id: client-service
           uri: lb://client-service  # lb:// означает использование Load Balancer
           predicates:
-            - Path=/api/clients/**
+            - Path=/api/v1.0/clients/**
 
 management:
   endpoint:

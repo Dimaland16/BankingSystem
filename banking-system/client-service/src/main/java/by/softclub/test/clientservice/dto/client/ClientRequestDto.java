@@ -31,6 +31,10 @@ public class ClientRequestDto {
     @Size(max = 50, message = "Middle name must not exceed 50 characters")
     private String middleName;
 
+    @NotBlank(message = "Password is required")
+    @Size(max = 50, message = "Password must not exceed 50 characters")
+    private String password;
+
     @NotNull(message = "Birth date is required")
     @Past(message = "Birth date must be in the past")
     private LocalDate birthDate;

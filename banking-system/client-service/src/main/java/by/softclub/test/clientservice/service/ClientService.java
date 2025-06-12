@@ -13,14 +13,23 @@ import by.softclub.test.clientservice.exception.*;
 import by.softclub.test.clientservice.mapper.*;
 import by.softclub.test.clientservice.repository.*;
 import by.softclub.test.clientservice.specification.ClientSpecification;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -38,12 +47,14 @@ public class ClientService {
     private final ContactInfoMapper contactInfoMapper;
     private final AddressMapper addressMapper;
     private final ClientChangeHistoryMapper clientChangeHistoryMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtEncoder jwtEncoder;
 
     @Autowired
     public ClientService(ClientRepository clientRepository, PassportDataRepository passportDataRepository,
                          AddressRepository addressRepository, ClientChangeHistoryRepository changeHistoryRepository,
                          ClientMapper clientMapper, PassportDataMapper passportDataMapper, ContactInfoMapper contactInfoMapper,
-                         AddressMapper addressMapper, ClientChangeHistoryMapper clientChangeHistoryMapper) {
+                         AddressMapper addressMapper, ClientChangeHistoryMapper clientChangeHistoryMapper, PasswordEncoder passwordEncoder, JwtEncoder jwtEncoder) {
         this.clientRepository = clientRepository;
         this.passportDataRepository = passportDataRepository;
         this.addressRepository = addressRepository;
@@ -53,6 +64,8 @@ public class ClientService {
         this.contactInfoMapper = contactInfoMapper;
         this.addressMapper = addressMapper;
         this.clientChangeHistoryMapper = clientChangeHistoryMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtEncoder = jwtEncoder;
     }
 
     @Transactional
@@ -66,6 +79,7 @@ public class ClientService {
         Address address = findOrCreateAddress(requestDto.getAddress());
 
         Client client = clientMapper.toEntity(requestDto);
+        client.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         client.setPassportData(passportData);
         client.setContactInfo(contactInfo);
         client.setAddress(address);
@@ -73,6 +87,37 @@ public class ClientService {
         client.setRegistrationDate(LocalDateTime.now());
 
         return clientMapper.toDto(clientRepository.save(client));
+    }
+
+    public String generateToken(Long userId, String email) {
+        try {
+            JwtClaimsSet claims = JwtClaimsSet.builder()
+                    .subject(email)
+                    .claim("userId", userId)
+                    .issuedAt(Instant.now())
+                    .expiresAt(Instant.now().plusSeconds(3600))
+                    .build();
+
+            JwsHeader jwsHeader = JwsHeader.with(MacAlgorithm.HS512).build();
+            JwtEncoderParameters parameters = JwtEncoderParameters.from(jwsHeader, claims);
+
+            String token = jwtEncoder.encode(parameters).getTokenValue();
+            System.out.println("Generated token: " + token);
+            return token;
+        } catch (Exception e) {
+            System.err.println("Failed to generate token: " + e.getMessage());
+            throw new JwtEncodingException("Failed to generate token", e);
+        }
+    }
+    public String loginClient(String email, String password) {
+        Client client = (Client) clientRepository.findByContactInfoEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Клиент с email " + email + " не найден"));
+
+        if (passwordEncoder.matches(password, client.getPassword())) {
+            return generateToken(client.getId(), email);
+        } else {
+            throw new IllegalArgumentException("Неверный пароль");
+        }
     }
 
     public ClientResponseDto getClientById(Long id) {

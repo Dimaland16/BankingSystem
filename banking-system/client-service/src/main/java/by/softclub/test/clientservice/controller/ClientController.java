@@ -17,6 +17,7 @@ import by.softclub.test.clientservice.service.ClientService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1.0/clients")
@@ -33,6 +34,19 @@ public class ClientController {
     public ResponseEntity<ClientResponseDto> createClient(@Valid @RequestBody ClientRequestDto clientRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(clientService.createClient(clientRequestDto));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ClientResponseDto> registerClient(@Valid @RequestBody ClientRequestDto clientRequestDto) {
+        return ResponseEntity.ok(clientService.createClient(clientRequestDto));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
+        String email = credentials.get("email");
+        String password = credentials.get("password");
+        String token = clientService.loginClient(email, password);
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
     @GetMapping("/{id}")

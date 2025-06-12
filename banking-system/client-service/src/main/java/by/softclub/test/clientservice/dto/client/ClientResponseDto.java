@@ -24,6 +24,8 @@ public class ClientResponseDto {
 
     private String middleName;
 
+    private String password;
+
     private LocalDate birthDate;
 
     private ClientStatus status;
