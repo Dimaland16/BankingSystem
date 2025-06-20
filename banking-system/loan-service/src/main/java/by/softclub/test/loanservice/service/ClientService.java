@@ -2,6 +2,8 @@ package by.softclub.test.loanservice.service;
 
 import by.softclub.test.loanservice.dto.LoanClientDto;
 import by.softclub.test.loanservice.dto.LoanClientStatus;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestClient;
 import org.springframework.stereotype.Service;
@@ -14,11 +16,21 @@ import java.util.Map;
 public class ClientService {
 
     private final RestClient restClient;
+    private final DiscoveryClient discoveryClient;
 
-    public ClientService(RestClient.Builder builder) {
-        this.restClient = builder
-                .baseUrl("http://169.254.176.87:8081/api/v1.0/clients")
-                .build();
+    public ClientService(RestClient.Builder builder, DiscoveryClient discoveryClient) {
+        this.discoveryClient = discoveryClient;
+        String baseUrl = getClientServiceUrl();
+        this.restClient = builder.baseUrl(baseUrl).build();
+    }
+
+    private String getClientServiceUrl() {
+        List<ServiceInstance> instances = discoveryClient.getInstances("client-service");
+        if (instances.isEmpty()) {
+            throw new RuntimeException("No instances of client-service found in Eureka");
+        }
+        ServiceInstance instance = instances.getFirst();
+        return instance.getUri().toString() + "/api/v1.0/clients";
     }
 
     public LoanClientDto getClientByPassport(String passportSeries, String passportNumber) {

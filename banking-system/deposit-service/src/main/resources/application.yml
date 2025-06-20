@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: deposit-service
+  config:
+    import: configserver:${CONFIG_URL:http://localhost:8888}
+jwt:
+  secret:
+    access: 9kJ4z2g7X8pQ3wR5tY6uM9nB2vC4xL6kJ8hT3fA5dS7eW1qZ0rP9kJ4z2g7X8pQ3wR5tY6uM9nB2vC4xL6kJ8hT3fA5dS7eW1qZ0rP
