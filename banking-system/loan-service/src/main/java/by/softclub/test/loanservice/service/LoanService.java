@@ -101,7 +101,7 @@ public class LoanService {
             paymentSchedule.setPrincipalAmount(principalPayment);
             paymentSchedule.setInterestAmount(interestPayment);
             paymentSchedule.setTotalAmount(monthlyPayment);
-            paymentSchedule.setStatus(PaymentStatus.PENDING);
+            paymentSchedule.setStatus(PaymentStatus.PLANNED);
 
             schedule.add(paymentSchedule);
         }
@@ -116,13 +116,13 @@ public class LoanService {
     }
 
     public LoanResponseDto createLoan(LoanRequestDto requestDto) {
-        LoanClientDto client = getClientForLoan("MP", "83456456");
-        if (!isEligibleForLoanAgreement(client))
-            throw new RuntimeException("Client is not eligible for loan");
-
         if (requestDto.getLoanAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Loan amount must be positive");
         }
+
+        LoanClientDto client = getClientForLoan("MP", "83456456");
+        if (!isEligibleForLoanAgreement(client))
+            throw new RuntimeException("Client is not eligible for loan");
 
         Loan loan = loanMapper.toEntity(requestDto);
         loan.setClientId(client.getId());
@@ -204,11 +204,11 @@ public class LoanService {
 
     public void issueLoan(Long id) {
         Loan loan = loanRepository.findById(id).orElseThrow(() -> new RuntimeException("Loan not found"));
-        if (!loan.getStatus().equals(LoanStatus.ACTIVE)) {
+        if (!loan.getStatus().equals(LoanStatus.CLOSED)) {
             loan.setStatus(LoanStatus.ACTIVE);
             loanRepository.save(loan);
         } else {
-            throw new RuntimeException("Loan is already active");
+            throw new RuntimeException("Loan is already closed");
         }
     }
 
@@ -232,6 +232,4 @@ public class LoanService {
         loan.setStatus(LoanStatus.CLOSED);
         loanRepository.save(loan);
     }
-
-
 }

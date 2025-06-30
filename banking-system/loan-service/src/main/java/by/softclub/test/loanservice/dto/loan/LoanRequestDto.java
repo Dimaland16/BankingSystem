@@ -1,6 +1,9 @@
 package by.softclub.test.loanservice.dto.loan;
 
+import by.softclub.test.loanservice.dto.payment.PaymentHistoryDto;
+import by.softclub.test.loanservice.dto.payment.PaymentScheduleDto;
 import by.softclub.test.loanservice.entity.LoanProductType;
+import by.softclub.test.loanservice.entity.LoanStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -10,6 +13,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,8 +31,8 @@ public class LoanRequestDto {
     @Size(max = 50, message = "Contract number must not exceed 50 characters")
     private String contractNumber;
 
-    @NotBlank(message = "Product type is required")
-    @Size(max = 50, message = "Product type must not exceed 50 characters")
+    @NotNull(message = "Product type must not be null")
+    //@Size(max = 50, message = "Product type must not exceed 50 characters")
     private LoanProductType productType;
 
     @NotNull(message = "Loan amount is required")
@@ -40,7 +44,7 @@ public class LoanRequestDto {
     private BigDecimal interestRate;
 
     @NotNull(message = "Loan term months is required")
-    @Min(value = 1, message = "Loan term months must be at least 1")
+    @Min(value = 1, message = "Loan term must be at least 1 month")
     private Integer loanTermMonths;
 
     @NotNull(message = "Contract date is required")
@@ -50,6 +54,19 @@ public class LoanRequestDto {
     @NotNull(message = "End date is required")
     @FutureOrPresent(message = "Contract date must be in the future or present")
     private LocalDate endDate;
+
+    @NotNull(message = "Status is required")
+    @Valid
+    private LoanStatus status;
+
+    @Valid
+    private List<PaymentScheduleDto> paymentSchedule;
+
+    @Valid
+    private List<PaymentHistoryDto> paymentHistory;
+
+    @PositiveOrZero(message = "Current debt must be non-negative")
+    private BigDecimal currentDebt;
 
     @NotNull(message = "Loan terms are required")
     @Valid

@@ -1,32 +1,27 @@
 package by.softclub.test.loanservice.entity;
 
+import by.softclub.test.loanservice.converter.LoanStatusAttributeConverter;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data // Заменяет @Getter + @Setter + toString() + equals() + hashCode()
 @Table(name = "loans")
 public class Loan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "loanId")
+    @Column(name = "loan_id")
     private Long loanId;
 
     @Column(name = "client_id")
     private Long clientId;
 
-    @Column(name = "contract_number")
+    @Column(name = "contract_number", nullable = false, unique = true)
     private String contractNumber;
 
     @Column(name = "product_type")
@@ -48,7 +43,8 @@ public class Loan {
     private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Convert(converter = LoanStatusAttributeConverter.class)
+    @Column(name = "status", nullable = false)
     private LoanStatus status;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -64,4 +60,29 @@ public class Loan {
 
     @Embedded
     private LoanTerms loanTerms;
+
+    // Конструкторы
+
+    public Loan() {
+    }
+
+    public Loan(Long clientId, String contractNumber, LoanProductType productType,
+                BigDecimal loanAmount, BigDecimal interestRate, Integer loanTermMonths,
+                LocalDate contractDate, LocalDate endDate, LoanStatus status,
+                List<PaymentSchedule> paymentSchedule, List<PaymentHistory> paymentHistory,
+                BigDecimal currentDebt, LoanTerms loanTerms) {
+        this.clientId = clientId;
+        this.contractNumber = contractNumber;
+        this.productType = productType;
+        this.loanAmount = loanAmount;
+        this.interestRate = interestRate;
+        this.loanTermMonths = loanTermMonths;
+        this.contractDate = contractDate;
+        this.endDate = endDate;
+        this.status = status;
+        this.paymentSchedule = paymentSchedule;
+        this.paymentHistory = paymentHistory;
+        this.currentDebt = currentDebt;
+        this.loanTerms = loanTerms;
+    }
 }

@@ -32,8 +32,8 @@ public class LoanResponseDto {
     @Size(max = 50, message = "Contract number must not exceed 50 characters")
     private String contractNumber;
 
-    @NotBlank(message = "Product type is required")
-    @Size(max = 50, message = "Product type must not exceed 50 characters")
+    @NotNull(message = "Product type must not be null")
+    //@Size(max = 50, message = "Product type must not exceed 50 characters")
     private LoanProductType productType;
 
     @NotNull(message = "Loan amount is required")

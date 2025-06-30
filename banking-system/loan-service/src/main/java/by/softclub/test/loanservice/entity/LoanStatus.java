@@ -2,6 +2,7 @@ package by.softclub.test.loanservice.entity;
 
 public enum LoanStatus {
     ACTIVE,
-    BLOCKED,
-    CLOSED, CREATED, SUSPENDED
+    CLOSED,
+    OVERDUE
+    //,BLOCKED, CLOSED, CREATED, SUSPENDED
 }

@@ -22,8 +22,13 @@ public class LoanUpdateDto {
     @Size(max = 50, message = "Contract number must not exceed 50 characters")
     private String contractNumber;
 
-    @NotBlank(message = "Product type is required")
-    @Size(max = 50, message = "Product type must not exceed 50 characters")
+    @NotNull(message = "Product type must not be null")
+    //@Size(max = 50, message = "Product type must not exceed 50 characters")
+    //Supported types are(for @Size):
+    //CharSequence (length of character sequence is evaluated)
+    //Collection (collection size is evaluated)
+    //Map (map size is evaluated)
+    //Array (array length is evaluated
     private LoanProductType productType;
 
     @NotNull(message = "Loan amount is required")
@@ -34,8 +39,8 @@ public class LoanUpdateDto {
     @Positive(message = "Interest rate must be positive")
     private BigDecimal interestRate;
 
-    @NotNull(message = "Loan term months is required")
-    @Size(min = 1, message = "Loan term months must be at least 1")
+    @NotNull(message = "Loan term is required")
+    @Min(value = 1, message = "Loan term must be at least 1 month")
     private Integer loanTermMonths;
 
     @NotNull(message = "End date is required")

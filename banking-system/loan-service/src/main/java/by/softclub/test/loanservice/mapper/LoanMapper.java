@@ -8,46 +8,42 @@ import by.softclub.test.loanservice.entity.Loan;
 import by.softclub.test.loanservice.entity.LoanTerms;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring", uses = {LoanTermsMapper.class, PaymentScheduleMapper.class, PaymentHistoryMapper.class})
+@Mapper(componentModel = "spring")  //, uses = {LoanTermsMapper.class, PaymentScheduleMapper.class, PaymentHistoryMapper.class})
 public interface LoanMapper {
-    /*
-        @Mapping(target = "loanId", source = "loanId")
-        @Mapping(target = "clientId", source = "clientId")
-        @Mapping(target = "contractNumber", source = "contractNumber")
-        @Mapping(target = "productType", source = "productType")
-        @Mapping(target = "loanAmount", source = "loanAmount")
-        @Mapping(target = "interestRate", source = "interestRate")
-        @Mapping(target = "loanTermMonths", source = "loanTermMonths")
-        @Mapping(target = "contractDate", source = "contractDate")
-        @Mapping(target = "endDate", source = "endDate")
 
-        @Mapping(target = "status", source = "status")
-        @Mapping(target = "paymentSchedule", source = "paymentSchedule")
-        @Mapping(target = "paymentHistory", source = "paymentHistory")
-        @Mapping(target = "currentDebt", source = "currentDebt")
+    /*@Mapping(source = "loanId", target = "loanId")
+    @Mapping(source = "clientId", target = "clientId")
+    @Mapping(source = "contractNumber", target = "contractNumber")
+    @Mapping(source = "productType", target = "productType")
+    @Mapping(source = "loanAmount", target = "loanAmount")
+    @Mapping(source = "interestRate", target = "interestRate")
+    @Mapping(source = "loanTermMonths", target = "loanTermMonths")
+    @Mapping(source = "contractDate", target = "contractDate")
+    @Mapping(source = "endDate", target = "endDate")
+    @Mapping(source = "status", target = "status", defaultExpression = "java(LoanStatus.NEW)")
+    @Mapping(source = "paymentSchedule", target = "paymentSchedule")
+    @Mapping(source = "paymentHistory", target = "paymentHistory")
+    @Mapping(source = "currentDebt", target = "currentDebt", defaultExpression = "java(java.math.BigDecimal.ZERO)")
+    @Mapping(source = "loanTerms", target = "loanTerms")*/
+    Loan toEntity(LoanRequestDto dto);
 
-    @Mapping(target = "loanTerms", source = "loanTerms")
 
-
-    @Mapping(target = "loanId", source = "loanId")
-    @Mapping(target = "clientId", source = "clientId")
-    @Mapping(target = "contractNumber", source = "contractNumber")
-    @Mapping(target = "productType", source = "productType")
-    @Mapping(target = "loanAmount", source = "loanAmount")
-    @Mapping(target = "interestRate", source = "interestRate")
-    @Mapping(target = "loanTermMonths", source = "loanTermMonths")
-    @Mapping(target = "contractDate", source = "contractDate")
-    @Mapping(target = "endDate", source = "endDate")
-    @Mapping(target = "status", source = "status")
-    @Mapping(target = "paymentSchedule", source = "paymentSchedule")
-    @Mapping(target = "paymentHistory", source = "paymentHistory")
-    @Mapping(target = "currentDebt", source = "currentDebt")
-    @Mapping(target = "loanTerms", source = "loanTerms")
-
-     */
-
-    Loan toEntity(LoanRequestDto requestDto);
-
+/*
+    @Mapping(source = "loanId", target = "loanId")
+    @Mapping(source = "clientId", target = "clientId")
+    @Mapping(source = "contractNumber", target = "contractNumber")
+    @Mapping(source = "productType", target = "productType")
+    @Mapping(source = "loanAmount", target = "loanAmount")
+    @Mapping(source = "interestRate", target = "interestRate")
+    @Mapping(source = "loanTermMonths", target = "loanTermMonths")
+    @Mapping(source = "contractDate", target = "contractDate")
+    @Mapping(source = "endDate", target = "endDate")
+    @Mapping(source = "status", target = "status")
+    @Mapping(source = "paymentSchedule", target = "paymentSchedule")
+    @Mapping(source = "paymentHistory", target = "paymentHistory")
+    @Mapping(source = "currentDebt", target = "currentDebt")
+    @Mapping(source = "loanTerms", target = "loanTerms")*/
     LoanResponseDto toDto(Loan loan);
 }

@@ -1,6 +1,7 @@
 package by.softclub.test.loanservice.dto.payment;
 
 import by.softclub.test.loanservice.entity.PaymentStatus;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,9 @@ import java.time.LocalDate;
 public class PaymentScheduleDto {
 
     private Long id;
+
+    @Column(name = "loan_id")
+    private Long loanId;
 
     @NotNull(message = "Payment date is required")
     private LocalDate paymentDate;
