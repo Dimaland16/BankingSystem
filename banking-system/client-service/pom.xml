@@ -12,7 +12,7 @@
 
 	<groupId>by.softclub.test</groupId>
 	<artifactId>client-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>client-service</name>
 
 	<properties>
@@ -69,7 +69,6 @@
 			<version>1.6.2</version>
 			<scope>provided</scope>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -140,7 +139,6 @@
 						<exclude>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.38</version>
 						</exclude>
 					</excludes>
 				</configuration>

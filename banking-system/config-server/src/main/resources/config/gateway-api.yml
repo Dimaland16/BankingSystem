@@ -26,3 +26,6 @@ management:
   endpoint:
     gateway:
       enabled: true
+    web:
+      exposure:
+        include: health
