@@ -1,0 +1,16 @@
+services:
+  test-deposit-db:
+    container_name: test-deposit-db
+    image: postgres:17.4
+    environment:
+      - POSTGRES_DB=test_deposit_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5434:5432"
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

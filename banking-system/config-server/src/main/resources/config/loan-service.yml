@@ -1,8 +1,8 @@
 server:
   port: 8082
 spring:
-  datasource: #Не забыть заменить на 5433 для докера
-    url: jdbc:postgresql://localhost:5432/loanService
+  datasource:
+    url: jdbc:postgresql://localhost:5434/loan_db
     password: 'postgres'
     username: 'postgres'
     driver-class-name: org.postgresql.Driver

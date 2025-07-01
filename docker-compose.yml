@@ -171,6 +171,8 @@ services:
   loan-db:
     image: postgres:17.4
     container_name: loan-db
+    ports:
+      - "5434:5432"
     environment:
       POSTGRES_DB: loan_db
       POSTGRES_USER: postgres
@@ -190,6 +192,8 @@ services:
   deposit-db:
     image: postgres:17.4
     container_name: deposit-db
+    ports:
+      - "5435:5432"
     environment:
       POSTGRES_DB: deposit_db
       POSTGRES_USER: postgres
@@ -210,6 +214,8 @@ services:
   client-db:
     image: postgres:17.4
     container_name: client-db
+    ports:
+      - "5433:5432"
     environment:
       POSTGRES_DB: client_db
       POSTGRES_USER: postgres

@@ -1,0 +1,5 @@
+CREATE TABLE contact_info (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    email VARCHAR(100),
+    phone_number VARCHAR(20)
+);
