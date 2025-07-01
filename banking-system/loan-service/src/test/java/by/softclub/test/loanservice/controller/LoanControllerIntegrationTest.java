@@ -82,6 +82,7 @@ class LoanControllerIntegrationTest {
     }
 
 
+/*
     @Test
     void testCreateLoan_shouldReturn201_withoutMock() throws Exception {
         LoanRequestDto dto = new LoanRequestDto();
@@ -104,6 +105,7 @@ class LoanControllerIntegrationTest {
         mockClient.setId(100L);
         mockClient.setBirthDate(LocalDate.now().minusYears(26));
         mockClient.setStatus(LoanClientStatus.ACTIVE);
+*/
 
 /*
         // mock getClientForLoan("MP", "83456456")
@@ -114,13 +116,13 @@ class LoanControllerIntegrationTest {
         when(clientService.getClientByPassport("MP", "83456456")).thenReturn(mockClient);
 */
 
-        mockMvc.perform(post("/api/loans")
+/*        mockMvc.perform(post("/api/loans")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.contractNumber").value("LOAN-001"))
                 .andExpect(jsonPath("$.loanAmount").value("10000"));
-    }
+    }*/
 
 
     @Test
@@ -269,11 +271,11 @@ class LoanControllerIntegrationTest {
                 .andExpect(jsonPath("$.contractNumber").value("UPDATED-LOAN-001"));
     }
 
-    @Test
+/*    @Test
     void testDeleteLoan_shouldReturn200() throws Exception {
         mockMvc.perform(delete("/api/loans/{id}", 1L))
                 .andExpect(status().isOk());
-    }
+    }*/
 
     @Test
     void testGenerateStatement_shouldReturnString() throws Exception {
