@@ -47,7 +47,7 @@ public class Loan {
     @Column(name = "status", nullable = false)
     private LoanStatus status;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH})
     @JoinColumn(name = "loan_id")
     private List<PaymentSchedule> paymentSchedule;
 

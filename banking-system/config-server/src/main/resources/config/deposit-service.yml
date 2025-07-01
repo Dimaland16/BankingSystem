@@ -3,7 +3,6 @@ server:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5435/deposit_db
-    #url: jdbc:postgresql://localhost:5432/depositService
     password: 'postgres'
     username: 'postgres'
     driver-class-name: org.postgresql.Driver
