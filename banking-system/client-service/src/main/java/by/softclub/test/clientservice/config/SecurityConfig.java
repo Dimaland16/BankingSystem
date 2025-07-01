@@ -36,7 +36,6 @@ public class SecurityConfig {
         return new NimbusJwtEncoder(new ImmutableSecret<>(getSecretKey()));
     }
 
-
     private SecretKey getSecretKey() {
         byte[] secretBytes = Base64.getDecoder().decode(jwtAccessSecret);
         if (secretBytes.length < 64) {

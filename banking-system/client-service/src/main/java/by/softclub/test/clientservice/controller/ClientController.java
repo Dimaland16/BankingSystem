@@ -6,9 +6,9 @@ import by.softclub.test.clientservice.dto.client.ClientResponseDto;
 import by.softclub.test.clientservice.dto.client.ClientUpdateDto;
 import by.softclub.test.clientservice.dto.clientChangeHistory.ClientChangeHistoryResponseDto;
 import by.softclub.test.clientservice.entity.*;
+import by.softclub.test.clientservice.service.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,16 +17,14 @@ import by.softclub.test.clientservice.service.ClientService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1.0/clients")
 public class ClientController {
 
     private final ClientService clientService;
-
     @Autowired
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, AuthenticationService authenticationService) {
         this.clientService = clientService;
     }
 
@@ -34,19 +32,6 @@ public class ClientController {
     public ResponseEntity<ClientResponseDto> createClient(@Valid @RequestBody ClientRequestDto clientRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(clientService.createClient(clientRequestDto));
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<ClientResponseDto> registerClient(@Valid @RequestBody ClientRequestDto clientRequestDto) {
-        return ResponseEntity.ok(clientService.createClient(clientRequestDto));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
-        String email = credentials.get("email");
-        String password = credentials.get("password");
-        String token = clientService.loginClient(email, password);
-        return ResponseEntity.ok(Map.of("token", token));
     }
 
     @GetMapping("/{id}")

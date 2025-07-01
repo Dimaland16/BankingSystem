@@ -9,6 +9,7 @@ import by.softclub.test.deposit_service.dto.deposit.DepositRequestDto;
 import by.softclub.test.deposit_service.dto.deposit.DepositResponseDto;
 import by.softclub.test.deposit_service.dto.deposit.DepositUpdateDto;
 import by.softclub.test.deposit_service.entity.*;
+import by.softclub.test.deposit_service.exception.*;
 import by.softclub.test.deposit_service.mapper.DepositMapper;
 import by.softclub.test.deposit_service.mapper.OperationMapper;
 import by.softclub.test.deposit_service.repository.DepositRepository;
@@ -55,12 +56,12 @@ public class DepositService {
         DepositClientDto client = clientService.getClientByPassport(requestDto.getPassportSeries(), requestDto.getPassportNumber());
 
         if (!isEligibleForDeposit(client))
-            throw new RuntimeException("Client is not eligible for loan");
+            throw new ClientNotEligibleException("Client is not eligible for deposit");
 
         validateUniqueContractNumber(requestDto.getContractNumber());
 
         DepositType depositType = depositTypeRepository.findByName(requestDto.getDepositTypeName())
-                .orElseThrow(() -> new IllegalArgumentException("Тип депозита с названием '" + requestDto.getDepositTypeName() + "' не найден"));
+                .orElseThrow(() -> new DepositTypeNotFoundException("Deposit type not found: " + requestDto.getDepositTypeName()));
 
         Deposit deposit = depositMapper.toEntity(requestDto);
         deposit.setClientId(client.getId());
@@ -74,11 +75,11 @@ public class DepositService {
     public boolean isEligibleForDeposit(DepositClientDto clientDto) {
 
         if (!clientDto.getStatus().equals(DepositClientStatus.ACTIVE)) {
-            throw new RuntimeException("Client is not active. Current status: " + clientDto.getStatus());
+            throw new ClientNotEligibleException("Client is not active. Current status: " + clientDto.getStatus());
         }
 
         if (!isClientOldEnough(clientDto.getBirthDate())) {
-            throw new RuntimeException("Client is under the minimum age requirement");
+            throw new ClientNotEligibleException("Client is under the minimum age requirement");
         }
 
         return true;
@@ -159,7 +160,7 @@ public class DepositService {
         Deposit deposit = findDepositById(id);
 
         if (deposit.getStatus() == DepositStatus.CLOSED) {
-            throw new IllegalStateException("Deposit is already closed");
+            throw new OperationNotAllowedException("Deposit is already closed");
         }
 
         deposit.setStatus(DepositStatus.CLOSED);
@@ -182,31 +183,31 @@ public class DepositService {
     // Проверка уникальности номера договора
     private void validateUniqueContractNumber(String contractNumber) {
         if (depositRepository.existsByContractNumber(contractNumber)) {
-            throw new RuntimeException("Contract number " + contractNumber + " already exists");
+            throw new ContractNumberExistsException("Contract number " + contractNumber + " already exists");
         }
     }
 
     // Проверка возможности пополнения
     private void validateTopUpAllowed(Deposit deposit) {
         if (!deposit.getDepositType().getCondition().getIsTopUpAllowed()) {
-            throw new RuntimeException("Top-up is not allowed for this deposit");
+            throw new OperationNotAllowedException("Top-up is not allowed for this deposit");
         }
     }
 
     // Проверка возможности частичного снятия
     private void validatePartialWithdrawalAllowed(Deposit deposit, BigDecimal amount) {
         if (!deposit.getDepositType().getCondition().getIsPartialWithdrawalAllowed()) {
-            throw new RuntimeException("Partial withdrawal is not allowed for this deposit");
+            throw new OperationNotAllowedException("Partial withdrawal is not allowed for this deposit");
         }
         if (deposit.getContractAmount().subtract(amount).compareTo(deposit.getDepositType().getCondition().getMinimumBalance()) < 0) {
-            throw new RuntimeException("The remaining balance cannot be less than the minimum balance");
+            throw new OperationNotAllowedException("The remaining balance cannot be less than the minimum balance");
         }
     }
 
     // Поиск депозита по ID
     private Deposit findDepositById(Long id) {
         return depositRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Deposit not found with ID: " + id));
+                .orElseThrow(() -> new DepositNotFoundException("Deposit not found with ID: " + id));
     }
 
     public List<DepositResponseDto> getAllDeposits() {
@@ -221,9 +222,7 @@ public class DepositService {
      */
     public void accrueMonthlyInterest(Long depositId, BigDecimal monthlyInterest) {
         Deposit deposit = findDepositById(depositId);
-
         deposit.setContractAmount(deposit.getContractAmount().add(monthlyInterest));
-
         createOperation(deposit, OperationType.INTEREST_PAYMENT, monthlyInterest);
         depositRepository.save(deposit);
     }
@@ -253,12 +252,9 @@ public class DepositService {
     }
 
     private BigDecimal calculateCompoundInterest(BigDecimal principal, BigDecimal annualRate, int months) {
-        BigDecimal rate = annualRate
-                .divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
+        BigDecimal rate = annualRate.divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
         BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP);
-        BigDecimal compoundedAmount = principal.multiply(
-                BigDecimal.ONE.add(monthlyRate).pow(months)
-        );
+        BigDecimal compoundedAmount = principal.multiply(BigDecimal.ONE.add(monthlyRate).pow(months));
         return compoundedAmount.subtract(principal).setScale(2, RoundingMode.HALF_UP);
     }
 
@@ -267,18 +263,14 @@ public class DepositService {
         BigDecimal currentBalance = initialAmount;
 
         for (int month = 1; month <= months; month++) {
-
             int daysInMonth = startDate.lengthOfMonth();
-
             BigDecimal monthlyInterest = currentBalance
                     .multiply(annualRate)
                     .multiply(BigDecimal.valueOf(daysInMonth))
                     .divide(BigDecimal.valueOf(365).multiply(BigDecimal.valueOf(100)), 2, RoundingMode.HALF_UP);
 
             currentBalance = currentBalance.add(monthlyInterest).setScale(2, RoundingMode.HALF_UP);
-
             monthlyBalances.add(new InterestCalculationResponseDto.MonthlyBalanceDto(month, currentBalance));
-
             startDate = startDate.plusMonths(1);
         }
 
@@ -304,7 +296,6 @@ public class DepositService {
      */
     public StatementResponseDto generateStatement(Long depositId, LocalDateTime startDate, LocalDateTime endDate) {
         Deposit deposit = findDepositById(depositId);
-
         List<Operation> operations = operationService.getOperationsByPeriod(depositId, startDate, endDate);
 
         BigDecimal totalDeposits = calculateTotalByType(operations, OperationType.DEPOSIT);

@@ -5,6 +5,8 @@ import by.softclub.test.deposit_service.dto.depositType.DepositTypeResponseDto;
 import by.softclub.test.deposit_service.dto.depositType.DepositTypeUpdateDto;
 import by.softclub.test.deposit_service.entity.DepositCondition;
 import by.softclub.test.deposit_service.entity.DepositType;
+import by.softclub.test.deposit_service.exception.DepositTypeAlreadyExistsException;
+import by.softclub.test.deposit_service.exception.DepositTypeNotFoundException;
 import by.softclub.test.deposit_service.mapper.DepositTypeMapper;
 import by.softclub.test.deposit_service.repository.DepositTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,7 +31,7 @@ public class DepositTypeService{
     public DepositTypeResponseDto createDepositType(DepositTypeRequestDto requestDTO) {
         // Проверка уникальности имени
         if (depositTypeRepository.existsByName(requestDTO.getName())) {
-            throw new IllegalStateException("Тип депозита с таким именем уже существует");
+            throw new DepositTypeAlreadyExistsException("Deposit type with name '" + requestDTO.getName() + "' already exists");
         }
 
         // Преобразование DTO в сущность
@@ -44,7 +46,7 @@ public class DepositTypeService{
 
     public DepositTypeResponseDto getDepositTypeById(Long id) {
         DepositType depositType = depositTypeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Тип депозита с ID " + id + " не найден"));
+                .orElseThrow(() -> new DepositTypeNotFoundException("Deposit type with ID " + id + " not found"));
         return depositTypeMapper.toDto(depositType);
     }
 
@@ -56,7 +58,7 @@ public class DepositTypeService{
 
     public DepositTypeResponseDto updateDepositType(Long id, DepositTypeUpdateDto updateDTO) {
         DepositType depositType = depositTypeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Тип депозита с ID " + id + " не найден"));
+                .orElseThrow(() -> new DepositTypeAlreadyExistsException("Deposit type with name '" + updateDTO.getName() + "' already exists"));
 
         // Обновление полей, если они заданы
 /*        updateDTO.getName().ifPresent(depositType::setName);
@@ -68,7 +70,7 @@ public class DepositTypeService{
                 depositType.setCondition(condition);
             }
             depositTypeMapper.updateConditionFromDto(conditionDTO, condition);
-        })*/;
+        });*/
 
         depositType = depositTypeRepository.save(depositType);
         return depositTypeMapper.toDto(depositType);
@@ -76,7 +78,7 @@ public class DepositTypeService{
 
     public void deleteDepositType(Long id) {
         if (!depositTypeRepository.existsById(id)) {
-            throw new EntityNotFoundException("Тип депозита с ID " + id + " не найден");
+            throw new DepositTypeNotFoundException("Deposit type with ID " + id + " not found");
         }
         depositTypeRepository.deleteById(id);
     }
