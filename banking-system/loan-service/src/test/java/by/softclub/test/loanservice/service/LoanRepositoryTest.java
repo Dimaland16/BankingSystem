@@ -89,12 +89,14 @@ class LoanRepositoryTest {
         loan1.setContractNumber("LOAN-003");
         loan1.setProductType(LoanProductType.CONSUMER_LOAN);
         loan1.setLoanAmount(new BigDecimal("15000"));
+        loan1.setStatus(LoanStatus.ACTIVE);
 
         Loan loan2 = new Loan();
         loan2.setClientId(200L);
         loan2.setContractNumber("LOAN-004");
         loan2.setProductType(LoanProductType.CONSUMER_LOAN);
         loan2.setLoanAmount(new BigDecimal("5000"));
+        loan2.setStatus(LoanStatus.ACTIVE);
 
         loanRepository.save(loan1);
         loanRepository.save(loan2);
@@ -116,6 +118,7 @@ class LoanRepositoryTest {
         loan.setContractNumber("LOAN-005");
         loan.setProductType(LoanProductType.MORTGAGE);
         loan.setLoanAmount(new BigDecimal("25000"));
+        loan.setStatus(LoanStatus.ACTIVE);
 
         Loan saved = loanRepository.save(loan);
 
@@ -138,6 +141,8 @@ class LoanRepositoryTest {
         Loan loan = new Loan();
         loan.setClientId(100L);
         loan.setContractNumber("LOAN-006");
+        loan.setStatus(LoanStatus.ACTIVE);
+
         Loan saved = loanRepository.save(loan);
 
         // When
@@ -165,10 +170,13 @@ class LoanRepositoryTest {
         Loan loan1 = new Loan();
         loan1.setClientId(100L);
         loan1.setContractNumber("LOAN-DUPLICATE");
+        loan1.setStatus(LoanStatus.ACTIVE);
 
         Loan loan2 = new Loan();
         loan2.setClientId(200L);
         loan2.setContractNumber("LOAN-DUPLICATE");
+        loan2.setStatus(LoanStatus.ACTIVE);
+
 
         loanRepository.save(loan1);
         assertThatThrownBy(() -> loanRepository.saveAndFlush(loan2))
