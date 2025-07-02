@@ -48,13 +48,12 @@ public class ClientService {
     private final AddressMapper addressMapper;
     private final ClientChangeHistoryMapper clientChangeHistoryMapper;
     private final PasswordEncoder passwordEncoder;
-    private final JwtEncoder jwtEncoder;
 
     @Autowired
     public ClientService(ClientRepository clientRepository, PassportDataRepository passportDataRepository,
                          AddressRepository addressRepository, ClientChangeHistoryRepository changeHistoryRepository,
                          ClientMapper clientMapper, PassportDataMapper passportDataMapper, ContactInfoMapper contactInfoMapper,
-                         AddressMapper addressMapper, ClientChangeHistoryMapper clientChangeHistoryMapper, PasswordEncoder passwordEncoder, JwtEncoder jwtEncoder) {
+                         AddressMapper addressMapper, ClientChangeHistoryMapper clientChangeHistoryMapper, PasswordEncoder passwordEncoder) {
         this.clientRepository = clientRepository;
         this.passportDataRepository = passportDataRepository;
         this.addressRepository = addressRepository;
@@ -65,7 +64,6 @@ public class ClientService {
         this.addressMapper = addressMapper;
         this.clientChangeHistoryMapper = clientChangeHistoryMapper;
         this.passwordEncoder = passwordEncoder;
-        this.jwtEncoder = jwtEncoder;
     }
 
     @Transactional
@@ -87,37 +85,6 @@ public class ClientService {
         client.setRegistrationDate(LocalDateTime.now());
 
         return clientMapper.toDto(clientRepository.save(client));
-    }
-
-    public String generateToken(Long userId, String email) {
-        try {
-            JwtClaimsSet claims = JwtClaimsSet.builder()
-                    .subject(email)
-                    .claim("userId", userId)
-                    .issuedAt(Instant.now())
-                    .expiresAt(Instant.now().plusSeconds(3600))
-                    .build();
-
-            JwsHeader jwsHeader = JwsHeader.with(MacAlgorithm.HS512).build();
-            JwtEncoderParameters parameters = JwtEncoderParameters.from(jwsHeader, claims);
-
-            String token = jwtEncoder.encode(parameters).getTokenValue();
-            System.out.println("Generated token: " + token);
-            return token;
-        } catch (Exception e) {
-            System.err.println("Failed to generate token: " + e.getMessage());
-            throw new JwtEncodingException("Failed to generate token", e);
-        }
-    }
-    public String loginClient(String email, String password) {
-        Client client = (Client) clientRepository.findByContactInfoEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Клиент с email " + email + " не найден"));
-
-        if (passwordEncoder.matches(password, client.getPassword())) {
-            return generateToken(client.getId(), email);
-        } else {
-            throw new IllegalArgumentException("Неверный пароль");
-        }
     }
 
     public ClientResponseDto getClientById(Long id) {

@@ -3,12 +3,17 @@ server:
 
 eureka:
   instance:
-    hostname: localhost
+    hostname: eureka-server
   client:
     registerWithEureka: false    # не регистрировать себя в реестре
     fetchRegistry: false         # не получать реестр
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
   server:
     wait-time-in-ms-when-sync-empty: 0
     enable-self-preservation: false  # отключаем для разработки
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

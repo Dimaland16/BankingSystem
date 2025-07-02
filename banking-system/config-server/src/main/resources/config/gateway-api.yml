@@ -17,8 +17,15 @@ spring:
           uri: lb://loan-service  # lb:// означает использование Load Balancer
           predicates:
             - Path=/api/loans/**
+        - id: deposit-service
+          uri: lb://deposit-service  # lb:// означает использование Load Balancer
+          predicates:
+            - Path=/api/v1.0/deposits/**
 
 management:
   endpoint:
     gateway:
       enabled: true
+    web:
+      exposure:
+        include: health
